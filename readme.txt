@@ -1,6 +1,7 @@
 sudo apt-get install libpq-dev
 pip install psycopg2
 pip install pillow
+pip install sqlalchemy
 conda install -c conda-forge postgresql
 sudo apt install postgresql-contrib
 sudo systemctl start postgresql
