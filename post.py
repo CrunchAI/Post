@@ -120,3 +120,32 @@ if __name__ == "__main__":
     # insert_image("path/to/your/image.jpg", "example_image")
     # retrieved_image = retrieve_image("example_image")
     # retrieved_image.show()
+
+from sqlalchemy import create_engine
+import pandas as pd
+import gradio as gr
+
+engine = create_engine('postgresql://' + str(DB_USER) + ':' + str(DB_PASSWORD) + '@' + str(DB_HOST) + ':' + str(DB_PORT) + '/' + str(DB_NAME))
+sqlquery = pd.read_sql_query("SELECT * FROM images", engine)
+
+print(sqlquery)
+
+fnstate = {1:"database", 
+           2:"text"}
+
+def gradfn():
+    global x
+    if "Empty DataFrame" in str(sqlquery): 
+        x = 2
+        return sqlquery.astype(str)
+    else: 
+        x = 1
+        return sqlquery
+
+demo = gr.Interface(fn = gradfn(),
+                    inputs=[
+                    gr.Dropdown(choices=["name", "upload_date", "data"], label="Filter Column"),
+                    gr.Textbox(label="Filter Value")],
+                    outputs = fnstate[x]) 
+
+demo.launch()
